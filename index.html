@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)file:///Users/vito.sorresso/Downloads/index.html -->
+<html lang="it"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NYC · 6–10 Maggio 2026</title>
+<link href="./index_files/css2" rel="stylesheet">
+<style>
+:root{--wed:#2C5F8A;--thu:#A0522D;--fri:#6B3FA0;--sat:#2E7D52;--sun:#666;--bg:#FAF8F4;--card:#fff;--border:#e8e2d8;--text:#1a1a1a;--muted:#888;--opt:#4a9a4a;--gold:#c8a96e;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+header{background:#1a1a1a;color:white;padding:12px 16px 10px;position:sticky;top:0;z-index:1000;}
+header h1{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;}
+header p{font-size:10px;color:#999;margin-top:2px;}
+.tabs{display:flex;overflow-x:auto;gap:5px;padding:9px 12px;background:#1a1a1a;border-top:1px solid #2e2e2e;scrollbar-width:none;position:sticky;top:52px;z-index:999;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1px solid #444;background:transparent;color:#aaa;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.tab.active{color:white;border-color:transparent;}
+
+/* MAP */
+.map-container{position:relative;width:100%;height:48vh;background:#e8e0d4;overflow:hidden;}
+#map-svg{width:100%;height:100%;}
+.map-hint{position:absolute;bottom:8px;right:8px;background:rgba(255,255,255,0.9);border-radius:8px;padding:4px 8px;font-size:10px;color:#666;pointer-events:none;}
+
+.legend{display:flex;gap:12px;padding:7px 14px;font-size:11px;color:var(--muted);background:var(--card);border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;}
+.leg{display:flex;align-items:center;gap:4px;}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+
+.steps{padding:8px 12px 100px;}
+.day-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;padding:10px 2px 6px;}
+.step{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;margin-bottom:5px;background:var(--card);border-radius:12px;border:1px solid var(--border);cursor:pointer;transition:transform 0.1s;-webkit-tap-highlight-color:transparent;}
+.step:active{transform:scale(0.98);}
+.step.opt-step{border-style:dashed;}
+.step-num{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;margin-top:1px;}
+.step-body{flex:1;min-width:0;}
+.step-name{font-size:13px;font-weight:500;line-height:1.3;}
+.step-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.opt-tag{display:inline-block;font-size:9px;padding:1px 6px;border-radius:8px;background:#e8f5e8;color:#2d7a2d;font-weight:500;margin-left:5px;vertical-align:middle;}
+.pre-tag{display:inline-block;font-size:9px;padding:1px 6px;border-radius:8px;background:#fff3e0;color:#e65100;font-weight:700;margin-left:5px;vertical-align:middle;}
+.step-cost{font-size:11px;color:var(--muted);flex-shrink:0;white-space:nowrap;align-self:center;}
+
+/* DETAIL SHEET */
+.overlay{position:fixed;inset:0;z-index:1999;background:rgba(0,0,0,0);pointer-events:none;transition:background 0.3s;}
+.overlay.open{background:rgba(0,0,0,0.4);pointer-events:all;}
+.detail{position:fixed;bottom:0;left:0;right:0;z-index:2000;background:var(--card);border-radius:20px 20px 0 0;box-shadow:0 -6px 30px rgba(0,0,0,0.15);transform:translateY(100%);transition:transform 0.32s cubic-bezier(.32,.72,0,1);max-height:85vh;overflow-y:auto;padding-bottom:20px;}
+.detail.open{transform:translateY(0);}
+.handle{width:36px;height:4px;background:#ddd;border-radius:2px;margin:12px auto 8px;}
+.d-header{padding:8px 16px 12px;border-bottom:1px solid var(--border);}
+.d-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;}
+.d-num{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;}
+.d-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;line-height:1.3;flex:1;}
+.d-badges{display:flex;gap:6px;flex-wrap:wrap;}
+.badge{font-size:10px;padding:3px 8px;border-radius:10px;font-weight:500;}
+.b-time{background:#f0f0f0;color:#555;}
+.b-cost{background:#f0f0f0;color:#555;}
+.b-opt{background:#e8f5e8;color:#2d7a2d;}
+.b-pre{background:#fff3e0;color:#e65100;font-weight:700;}
+.b-free{background:#e8f5f5;color:#1a7a6a;}
+.d-section{padding:12px 16px;border-bottom:1px solid var(--border);}
+.d-section:last-child{border-bottom:none;}
+.s-label{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}
+.d-desc{font-size:13px;color:#333;line-height:1.65;}
+.d-note{font-size:12px;line-height:1.6;padding:6px 10px;border-left:3px solid var(--border);margin-top:6px;border-radius:0 6px 6px 0;}
+.d-note.warn{border-color:#c0392b;background:#fdf5f5;color:#c0392b;}
+.d-note.tip{border-color:var(--gold);background:#fdf8f0;color:#7a5820;}
+.d-note.subway{border-color:#2C5F8A;background:#f0f5fa;color:#1a3a5a;}
+.link-row{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px 4px;}
+.lbtn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:20px;font-size:12px;font-weight:500;text-decoration:none;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.lbtn.maps{background:#1a1a1a;color:white;border-color:#1a1a1a;}
+.lbtn.book{background:#c0392b;color:white;border-color:#c0392b;}
+.budget-box{margin:10px 16px;background:var(--bg);border-radius:10px;padding:10px 12px;border:1px solid var(--border);}
+.b-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;color:#555;border-bottom:1px solid #f0ebe3;}
+.b-row.tot{font-weight:700;color:var(--text);border-top:1px solid var(--border);border-bottom:none;padding-top:6px;margin-top:4px;font-size:13px;}
+
+/* SVG MAP STYLES */
+.map-pin{cursor:pointer;transition:transform 0.15s;}
+.map-pin:hover{transform:scale(1.15);}
+.map-pin:active{transform:scale(1.05);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>■ New York City</h1>
+  <p>6–10 Maggio 2026 · Hotel Riu Plaza Times Square · 2 persone · Colazione inclusa</p>
+</header>
+
+<div class="tabs" id="tabs"><button class="tab active" style="background: rgb(44, 95, 138); border-color: rgb(44, 95, 138); color: white;">Mer 6</button><button class="tab" style="background: transparent; border-color: rgb(68, 68, 68); color: rgb(170, 170, 170);">Gio 7</button><button class="tab" style="background: transparent; border-color: rgb(68, 68, 68); color: rgb(170, 170, 170);">Ven 8</button><button class="tab" style="background: transparent; border-color: rgb(68, 68, 68); color: rgb(170, 170, 170);">Sab 9</button><button class="tab" style="background: transparent; border-color: rgb(68, 68, 68); color: rgb(170, 170, 170);">Dom 10</button></div>
+
+<div class="map-container">
+  <svg id="map-svg" viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg">
+    <!-- Water -->
+    <rect width="400" height="420" fill="#c8d8e8"></rect>
+    <!-- NJ -->
+    <path d="M0,0 L85,0 L90,50 L88,100 L85,150 L82,200 L80,250 L78,300 L76,350 L74,400 L74,420 L0,420 Z" fill="#d8d0c4"></path>
+    <!-- Manhattan island -->
+    <path d="M130,8 L158,8 L172,35 L178,80 L182,130 L185,180 L188,230 L188,280 L185,330 L178,362 L164,388 L150,398 L136,398 L124,382 L114,352 L108,312 L104,262 L102,212 L101,165 L102,118 L106,72 L114,30 Z" fill="#ede8df" stroke="#c8c0b0" stroke-width="0.8"></path>
+    <!-- Central Park -->
+    <path d="M158,132 L186,132 L188,182 L185,182 L183,178 L158,178 Z" fill="#b8d4a8" stroke="#98b888" stroke-width="0.5"></path>
+    <text x="172" y="152" text-anchor="middle" fill="#5a8a4a" font-size="7" font-family="sans-serif" font-weight="bold">Central Park</text>
+    <!-- Queens -->
+    <path d="M188,140 L240,125 L280,135 L295,165 L285,200 L260,215 L220,220 L195,210 L188,190 Z" fill="#ddd8ce" stroke="#c8c0b0" stroke-width="0.5"></path>
+    <text x="238" y="175" text-anchor="middle" fill="#888" font-size="8" font-family="sans-serif">Queens</text>
+    <!-- Brooklyn -->
+    <path d="M148,365 L188,358 L230,362 L270,375 L280,400 L270,420 L150,420 L130,405 Z" fill="#ddd8ce" stroke="#c8c0b0" stroke-width="0.5"></path>
+    <text x="210" y="395" text-anchor="middle" fill="#888" font-size="8" font-family="sans-serif">Brooklyn</text>
+    <!-- Liberty Island -->
+    <ellipse cx="68" cy="340" rx="8" ry="8" fill="#ddd8ce" stroke="#c8c0b0" stroke-width="0.5"></ellipse>
+    <!-- Governors Island -->
+    <ellipse cx="138" cy="385" rx="7" ry="6" fill="#ddd8ce" stroke="#c8c0b0" stroke-width="0.5"></ellipse>
+    <!-- Grid lines (streets) -->
+    <g stroke="#d0c8b8" stroke-width="0.3" opacity="0.7">
+      <line x1="102" y1="60" x2="178" y2="60"></line>
+      <line x1="101" y1="90" x2="180" y2="90"></line>
+      <line x1="101" y1="120" x2="182" y2="120"></line>
+      <line x1="101" y1="150" x2="185" y2="150"></line>
+      <line x1="101" y1="180" x2="188" y2="180"></line>
+      <line x1="101" y1="210" x2="188" y2="210"></line>
+      <line x1="101" y1="240" x2="188" y2="240"></line>
+      <line x1="102" y1="270" x2="187" y2="270"></line>
+      <line x1="103" y1="300" x2="184" y2="300"></line>
+      <line x1="105" y1="330" x2="180" y2="330"></line>
+      <line x1="120" y1="8" x2="108" y2="398"></line>
+      <line x1="135" y1="8" x2="122" y2="398"></line>
+      <line x1="150" y1="8" x2="137" y2="398"></line>
+      <line x1="165" y1="8" x2="152" y2="395"></line>
+    </g>
+    <!-- Labels -->
+    <text x="144" y="22" text-anchor="middle" fill="#aaa" font-size="7" font-family="sans-serif">Uptown</text>
+    <text x="144" y="205" text-anchor="middle" fill="#aaa" font-size="7" font-family="sans-serif">Midtown</text>
+    <text x="144" y="320" text-anchor="middle" fill="#aaa" font-size="7" font-family="sans-serif">Downtown</text>
+    <text x="40" y="240" text-anchor="middle" fill="#8aa0b8" font-size="7" font-family="sans-serif">Hudson</text>
+    <text x="40" y="250" text-anchor="middle" fill="#8aa0b8" font-size="7" font-family="sans-serif">River</text>
+    <text x="350" y="200" text-anchor="middle" fill="#8aa0b8" font-size="7" font-family="sans-serif">East River</text>
+    <!-- EWR label -->
+    <text x="20" y="15" text-anchor="middle" fill="#aaa" font-size="6" font-family="sans-serif">EWR</text>
+    <text x="20" y="23" text-anchor="middle" fill="#aaa" font-size="6" font-family="sans-serif">↗</text>
+    <!-- Pins layer (drawn by JS) -->
+    <g id="pins-layer"><g class="map-pin" transform="translate(133.0000000000049,228.90000000000393)" data-n="1" style="cursor: pointer;"><circle r="13" fill="#2C5F8A" stroke="white" stroke-width="2" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.3))"></circle><text text-anchor="middle" dy="4" fill="white" font-size="11" font-weight="bold" font-family="sans-serif" pointer-events="none">1</text></g><g class="map-pin" transform="translate(138.16666666666748,224.29999999999805)" data-n="2" style="cursor: pointer;"><circle r="13" fill="#2C5F8A" stroke="white" stroke-width="2" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.3))"></circle><text text-anchor="middle" dy="4" fill="white" font-size="11" font-weight="bold" font-family="sans-serif" pointer-events="none">2</text></g><g class="map-pin" transform="translate(137.1333333333291,226.5999999999928)" data-n="3" style="cursor: pointer;"><circle r="13" fill="#2C5F8A" stroke="white" stroke-width="2" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.3))"></circle><text text-anchor="middle" dy="4" fill="white" font-size="11" font-weight="bold" font-family="sans-serif" pointer-events="none">3</text></g><g class="map-pin" transform="translate(140.23333333332957,235.8000000000046)" data-n="4" style="cursor: pointer;"><circle r="13" fill="#2C5F8A" stroke="white" stroke-width="2" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.3))"></circle><text text-anchor="middle" dy="4" fill="white" font-size="11" font-weight="bold" font-family="sans-serif" pointer-events="none">4</text></g><g class="map-pin" transform="translate(140.0266666666707,236.7200000000025)" data-n="5" style="cursor: pointer;"><circle r="13" fill="#2C5F8A" stroke="white" stroke-width="2" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.3))"></circle><text text-anchor="middle" dy="4" fill="white" font-size="11" font-weight="bold" font-family="sans-serif" pointer-events="none">5</text></g><g class="map-pin" transform="translate(137.1333333333291,219.69999999999217)" data-n="6" style="cursor: pointer;"><circle r="13" fill="#2C5F8A" stroke="white" stroke-width="2" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.3))"></circle><text text-anchor="middle" dy="4" fill="white" font-size="11" font-weight="bold" font-family="sans-serif" pointer-events="none">6</text></g></g>
+    <!-- Path layer -->
+    <g id="path-layer"><path d="M133.0000000000049,228.90000000000393 L138.16666666666748,224.29999999999805 L137.1333333333291,226.5999999999928 L140.23333333332957,235.8000000000046 L140.0266666666707,236.7200000000025 L137.1333333333291,219.69999999999217 " fill="none" stroke="#2C5F8A" stroke-width="2" stroke-dasharray="5,4" opacity="0.5"></path></g>
+  </svg>
+  <div class="map-hint">Tocca un punto per i dettagli</div>
+</div>
+
+<div class="legend" id="legend"><div class="leg"><span class="leg-dot" style="background:#2C5F8A"></span><span style="font-weight:500">Mercoledì 6 Maggio — Arrivo · Giornata Soft</span></div><div class="leg"><span class="leg-dot" style="background:#4a9a4a"></span><span>Opzionale</span></div></div>
+<div class="steps" id="steps"><div class="day-title">Mercoledì 6 Maggio — Arrivo · Giornata Soft</div><div class="step" onclick="openDetail(DAYS[0].steps[0],&#39;#2C5F8A&#39;)">
+      <div class="step-num" style="background:#2C5F8A">1</div>
+      <div class="step-body">
+        <div class="step-name">Newark Airport Express → Hotel</div>
+        <div class="step-sub">12:35</div>
+      </div>
+      <div class="step-cost">$26/pers.</div>
+    </div><div class="step" onclick="openDetail(DAYS[0].steps[1],&#39;#2C5F8A&#39;)">
+      <div class="step-num" style="background:#2C5F8A">2</div>
+      <div class="step-body">
+        <div class="step-name">Hotel Riu Plaza Times Square</div>
+        <div class="step-sub">14:30</div>
+      </div>
+      <div class="step-cost">incluso</div>
+    </div><div class="step" onclick="openDetail(DAYS[0].steps[2],&#39;#2C5F8A&#39;)">
+      <div class="step-num" style="background:#2C5F8A">3</div>
+      <div class="step-body">
+        <div class="step-name">Times Square — Primo impatto</div>
+        <div class="step-sub">15:30</div>
+      </div>
+      <div class="step-cost">gratuito</div>
+    </div><div class="step" onclick="openDetail(DAYS[0].steps[3],&#39;#2C5F8A&#39;)">
+      <div class="step-num" style="background:#2C5F8A">4</div>
+      <div class="step-body">
+        <div class="step-name">5th Avenue → Bryant Park</div>
+        <div class="step-sub">16:15</div>
+      </div>
+      <div class="step-cost">gratuito</div>
+    </div><div class="step" onclick="openDetail(DAYS[0].steps[4],&#39;#2C5F8A&#39;)">
+      <div class="step-num" style="background:#2C5F8A">5</div>
+      <div class="step-body">
+        <div class="step-name">Bryant Park Dance Party — Samba &amp; Forró</div>
+        <div class="step-sub">18:00–20:30</div>
+      </div>
+      <div class="step-cost">gratuito</div>
+    </div><div class="step" onclick="openDetail(DAYS[0].steps[5],&#39;#2C5F8A&#39;)">
+      <div class="step-num" style="background:#2C5F8A">6</div>
+      <div class="step-body">
+        <div class="step-name">Ellen's Stardust Diner — Cena</div>
+        <div class="step-sub">20:45</div>
+      </div>
+      <div class="step-cost">~$25–35/pers.</div>
+    </div><div style="margin:14px 0 6px;padding:12px;background:#fff;border-radius:12px;border:1px solid var(--border);">
+    <div style="font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Budget giornata / persona</div><div class="b-row"><span>Bus EWR → Hotel</span><span style="font-weight:500">$26</span></div><div class="b-row"><span>Times Square + Bryant Park</span><span style="font-weight:500">gratuito</span></div><div class="b-row"><span>Ellen's Stardust (cena)</span><span style="font-weight:500">~$30</span></div><div class="b-row tot"><span>Totale stimato</span><span>~$56</span></div></div></div>
+
+<div class="overlay" id="overlay" onclick="closeDetail()"></div>
+<div class="detail" id="detail">
+  <div class="handle"></div>
+  <div id="detail-inner"></div>
+</div>
+
+<script>
+// SVG coordinate mapping: [svgX, svgY]
+// Manhattan roughly: lat 40.70 → y=360, lat 40.80 → y=130, lng -74.02 → x=102, lng -73.93 → x=195
+function latLngToSvg(lat, lng) {
+  const x = 102 + (lng - (-74.02)) / ((-73.93) - (-74.02)) * 93;
+  const y = 360 - (lat - 40.70) / (40.80 - 40.70) * 230;
+  return [Math.round(x), Math.round(y)];
+}
+
+const DAYS = [
+{
+  label:"Mer 6", color:"#2C5F8A", title:"Mercoledì 6 Maggio — Arrivo · Giornata Soft",
+  budget:[["Bus EWR → Hotel","$26"],["Times Square + Bryant Park","gratuito"],["Ellen's Stardust (cena)","~$30"]],
+  total:"~$56",
+  steps:[
+    {n:1,name:"Newark Airport Express → Hotel",time:"12:35",cost:"$26/pers.",opt:false,pre:false,
+     lat:40.757,lng:-73.990,
+     maps:"https://maps.google.com/?q=Port+Authority+Bus+Terminal+145+W+44th+St+New+York",
+     desc:"Atterraggio EWR. Immigrazione + dogana: 45–75 min. Fuori verso le 13:20–13:50.",
+     notes:[
+       {t:"subway",txt:"Seguite cartelli 'Ground Transportation → Buses'. Mostrate PDF biglietto Newark Airport Express. Sul bus SOLO CONTANTI $30."},
+       {t:"tip",txt:"Prima fermata Manhattan: Port Authority, 145 W 44th St — scendete qui. 3 min a piedi: nord su 8th Ave, destra su 46th St. Arrivo hotel: 14:30–15:00."},
+       {t:"warn",txt:"Acquistate i biglietti online PRIMA di partire dall'Italia su newarkairportexpress.com."}
+     ],
+     links:[{t:"Biglietti online",u:"https://www.newarkairportexpress.com",s:"book"}]},
+    {n:2,name:"Hotel Riu Plaza Times Square",time:"14:30",cost:"incluso",opt:false,pre:false,
+     lat:40.759,lng:-73.985,
+     maps:"https://maps.google.com/?q=Riu+Plaza+Times+Square+305+W+46th+St+New+York",
+     desc:"305 W 46th St. Check-in, doccia, orientamento.",
+     notes:[{t:"tip",txt:"Scaricate subito: app NYC Ferry, MTA (subway), Google Maps offline Manhattan."}],
+     links:[{t:"Sito hotel",u:"https://www.riu.com/en/hotel/usa/new-york/hotel-riu-plaza-new-york-times-square/",s:""}]},
+    {n:3,name:"Times Square — Primo impatto",time:"15:30",cost:"gratuito",opt:false,pre:false,
+     lat:40.758,lng:-73.986,
+     maps:"https://maps.google.com/?q=Times+Square+New+York",
+     desc:"2 minuti a piedi dall'hotel. Maxischermi, caos iconico, prime foto.",
+     notes:[{t:"tip",txt:"È solo il benvenuto — non esauritevi. Di notte è un'altra cosa: ci tornerete venerdì."}],
+     links:[]},
+    {n:4,name:"5th Avenue → Bryant Park",time:"16:15",cost:"gratuito",opt:false,pre:false,
+     lat:40.754,lng:-73.983,
+     maps:"https://maps.google.com/?q=Bryant+Park+New+York",
+     desc:"A piedi verso sud sulla 5th Ave, poi Bryant Park (40th–42nd St tra 5th e 6th Ave). Sedie verdi, caffè, grattacieli intorno.",
+     notes:[{t:"tip",txt:"A maggio tutto fiorito. Sedetevi e respirate — avete appena atterrato."}],
+     links:[{t:"Sito Bryant Park",u:"https://bryantpark.org/events",s:""}]},
+    {n:5,name:"Bryant Park Dance Party — Samba & Forró",time:"18:00–20:30",cost:"gratuito",opt:false,pre:false,
+     lat:40.7536,lng:-73.9832,
+     maps:"https://maps.google.com/?q=Bryant+Park+New+York",
+     desc:"Alla fontana di Bryant Park. 18:00 lezione gratuita con istruttori, 19:00 musica live brasileira fino alle 20:30.",
+     notes:[{t:"tip",txt:"Non serve saper ballare. Scarpe comode. Atmosfera magica sotto i grattacieli illuminati."}],
+     links:[]},
+    {n:6,name:"Ellen's Stardust Diner — Cena",time:"20:45",cost:"~$25–35/pers.",opt:false,pre:false,
+     lat:40.761,lng:-73.986,
+     maps:"https://maps.google.com/?q=Ellen's+Stardust+Diner+1650+Broadway+New+York",
+     desc:"1650 Broadway. I camerieri cantano Broadway mentre vi servono. Hamburger, nachos, pancake.",
+     notes:[{t:"tip",txt:"No prenotazione — arrivate dopo le 20:30. Rientro a piedi: 5 min."}],
+     links:[{t:"Sito",u:"https://www.ellensstardustdiner.com",s:""}]},
+  ]
+},
+{
+  label:"Gio 7", color:"#A0522D", title:"Giovedì 7 Maggio — Downtown · Ferry · Brooklyn",
+  budget:[["Subway (2 corse)","~$5.80"],["Apollo Bagel (pranzo)","~$9"],["NYC Ferry 34th→DUMBO","$4.50"],["Wall St + 9/11 + Staten Island + Ponti","gratuito"],["Cena libera","~$15–50"],["Statua Libertà (facoltativa)","+$25.50"]],
+  total:"~$34–65 (senza Statua)",
+  steps:[
+    {n:1,name:"Wall Street + Charging Bull + Fearless Girl",time:"10:15",cost:"gratuito",opt:false,pre:false,
+     lat:40.707,lng:-74.009,
+     maps:"https://maps.google.com/?q=Charging+Bull+Bowling+Green+New+York",
+     desc:"NYSE su Broad St, Charging Bull a Bowling Green, Fearless Girl davanti alla Borsa. 30–40 minuti.",
+     notes:[{t:"subway",txt:"A/C/E da 42nd St a Fulton St ~20 min ($2.90). Se avete fatto la Statua, uscite da Battery Park a piedi — 10 min."}],
+     links:[]},
+    {n:2,name:"Statua della Libertà — Liberty Island",time:"10:15",cost:"$25.50/pers.",opt:true,pre:false,
+     lat:40.689,lng:-74.045,
+     maps:"https://maps.google.com/?q=Battery+Park+Castle+Clinton+Ferry+New+York",
+     desc:"Ferry da Battery Park, Castle Clinton. Biglietto base: ferry A/R + Liberty Island + museo. Saltate Ellis Island per risparmiare tempo. Rientrate verso le 12:15.",
+     notes:[
+       {t:"subway",txt:"A/C/E da 42nd St a Bowling Green ~20 min, poi 5 min a piedi."},
+       {t:"warn",txt:"Prenotate su cityexperiences.com PRIMA di partire dall'Italia. Biglietti NON validi su ferry diversi da quello prenotato."},
+       {t:"tip",txt:"Se fate la Statua, Wall St e 9/11 si accorciano."}
+     ],
+     links:[{t:"Prenota City Cruises",u:"https://www.cityexperiences.com/new-york/city-cruises/statue-liberty/",s:"book"}]},
+    {n:3,name:"9/11 Memorial — Esterno",time:"11:00",cost:"gratuito",opt:false,pre:false,
+     lat:40.712,lng:-74.013,
+     maps:"https://maps.google.com/?q=9/11+Memorial+New+York",
+     desc:"Le due vasche riflettenti con i nomi incisi — potenti e commoventi. 20–30 minuti.",
+     notes:[{t:"tip",txt:"Museo interno ($33, 2 ore): non previsto oggi. L'esterno è già molto potente."}],
+     links:[{t:"Sito",u:"https://www.911memorial.org",s:""}]},
+    {n:4,name:"Staten Island Ferry",time:"11:35",cost:"gratuito",opt:false,pre:false,
+     lat:40.701,lng:-74.013,
+     maps:"https://maps.google.com/?q=Staten+Island+Ferry+Whitehall+Terminal+New+York",
+     desc:"5 min a piedi dal Memorial. Whitehall Terminal. 25 min A/R, nessun biglietto. Vedete la Statua dal mare.",
+     notes:[{t:"tip",txt:"Lato destro guardando verso Staten Island per la vista migliore."}],
+     links:[]},
+    {n:5,name:"Apollo Bagel — Pranzo (asporto)",time:"13:00",cost:"~$8–10/pers.",opt:false,pre:false,
+     lat:40.750,lng:-73.996,
+     maps:"https://maps.google.com/?q=Apollo+Bagels+224+W+35th+St+New+York",
+     desc:"224 W 35th St. Everything bagel con cream cheese al salmone. Zero deviazioni — già sul tragitto verso il 34th St Ferry Landing.",
+     notes:[{t:"subway",txt:"4/5/6 da Fulton St a 33rd St, 5 min ($2.90) — già sul percorso verso il ferry!"}],
+     links:[]},
+    {n:6,name:"NYC Ferry — East 34th St → DUMBO",time:"14:15",cost:"$4.50",opt:false,pre:false,
+     lat:40.747,lng:-73.973,
+     maps:"https://maps.google.com/?q=NYC+Ferry+34th+Street+Landing+New+York",
+     desc:"Dal 34th St Ferry Landing ~25 min di navigazione con vista su Manhattan Bridge, Brooklyn Bridge e skyline.",
+     notes:[
+       {t:"tip",txt:"Restate sul ponte per le foto. La vista è incredibile."},
+       {t:"warn",txt:"NON hop-on hop-off: salite al 34th St e scendete SOLO a DUMBO — se scendete prima ripagate."}
+     ],
+     links:[{t:"App NYC Ferry",u:"https://www.ferry.nyc",s:""}]},
+    {n:7,name:"DUMBO — Washington Street Photo",time:"14:50",cost:"gratuito",opt:false,pre:false,
+     lat:40.703,lng:-73.989,
+     maps:"https://maps.google.com/?q=Washington+Street+DUMBO+Brooklyn+New+York",
+     desc:"La foto iconica: il Manhattan Bridge incornicia l'Empire State Building. Da sotto il ponte è molto più imponente.",
+     notes:[],
+     links:[]},
+    {n:8,name:"Brooklyn Bridge — Verso Manhattan",time:"15:15",cost:"gratuito",opt:false,pre:false,
+     lat:40.706,lng:-73.997,
+     maps:"https://maps.google.com/?q=Brooklyn+Bridge+Pedestrian+Walkway",
+     desc:"Rampa pedonale lato Brooklyn. 30 minuti verso Manhattan. Corsia pedonale a sinistra.",
+     notes:[{t:"tip",txt:"Foto migliori a metà ponte guardando verso Manhattan."}],
+     links:[]},
+    {n:9,name:"Pier 35 — Tramonto sull'East River",time:"16:00",cost:"gratuito",opt:false,pre:false,
+     lat:40.709,lng:-73.997,
+     maps:"https://maps.google.com/?q=Pier+35+East+River+New+York",
+     desc:"Da City Hall Park verso nord lungo l'East River (~15 min a piedi). Altalene sul molo, ponti che diventano arancio.",
+     notes:[{t:"tip",txt:"Uno dei momenti più romantici del viaggio. Tramonto in maggio verso le 20:00."}],
+     links:[]},
+    {n:10,name:"Bryant Park — Swing & Rock 'n' Roll",time:"18:00",cost:"gratuito",opt:true,pre:false,
+     lat:40.7536,lng:-73.9832,
+     maps:"https://maps.google.com/?q=Bryant+Park+New+York",
+     desc:"Se avete energie! Lezione 18:00, live music 19:00–20:30.",
+     notes:[
+       {t:"subway",txt:"4/5/6 da Brooklyn Bridge-City Hall a 42nd St, poi 5 min a piedi ($2.90)."},
+       {t:"tip",txt:"Giornata intensa — valutate onestamente. Saltate senza sensi di colpa."}
+     ],
+     links:[]},
+    {n:11,name:"West Village — Cena + Passeggiata",time:"20:00",cost:"~$35–50/pers.",opt:true,pre:false,
+     lat:40.734,lng:-74.005,
+     maps:"https://maps.google.com/?q=West+Village+New+York",
+     desc:"Il quartiere più autentico di NYC. Stradine strette, villette a mattoni. Cena da Buvette (42 Grove St) o lungo Bedford Ave.",
+     notes:[
+       {t:"tip",txt:"Di sera le luci sui mattoni rossi sono perfette."},
+       {t:"subway",txt:"Rientro: A/C/E da Christopher St a 42nd St, 5 min ($2.90)."}
+     ],
+     links:[{t:"Buvette",u:"https://ilovebuvette.com",s:""}]},
+    {n:12,name:"SoHo — Cena + Passeggiata (alternativa)",time:"20:00",cost:"~$20–45/pers.",opt:true,pre:false,
+     lat:40.723,lng:-74.002,
+     maps:"https://maps.google.com/?q=SoHo+New+York",
+     desc:"Cast-iron buildings, negozi, locali vivaci. SoHo/NoLita è piena di ottimi ristoranti. Little Italy a 5 min: Mulberry St, lucine e cannolo.",
+     notes:[],
+     links:[]},
+    {n:13,name:"Keen's Steakhouse — Cena old school",time:"20:00",cost:"~$70–90/pers.",opt:true,pre:false,
+     lat:40.750,lng:-73.991,
+     maps:"https://maps.google.com/?q=Keen's+Steakhouse+72+W+36th+St+New+York",
+     desc:"72 W 36th St. Aperta dal 1885. Soffitto con 90.000 pipe da tabacco. Mutton chop leggendario. La vera old New York.",
+     notes:[{t:"tip",txt:"Vicinissima all'hotel. Prenotazione consigliata."}],
+     links:[{t:"Sito",u:"https://www.keens.com",s:""},{t:"Prenota Resy",u:"https://resy.com/cities/ny/keens-steakhouse",s:"book"}]},
+    {n:14,name:"Sugarfish — Cena omakase (opzione)",time:"20:00",cost:"~$50/pers.",opt:true,pre:false,
+     lat:40.739,lng:-73.989,
+     maps:"https://maps.google.com/?q=Sugarfish+33+E+20th+St+New+York",
+     desc:"33 E 20th St. Menu 'Trust Me' (~$50/pers.): omakase semplificato, pesce freschissimo. No prenotazione.",
+     notes:[{t:"subway",txt:"N/R da 42nd St a 23rd St, 3 min ($2.90)."}],
+     links:[{t:"Sito",u:"https://www.sugarfishsushi.com",s:""}]},
+  ]
+},
+{
+  label:"Ven 8", color:"#6B3FA0", title:"Venerdì 8 Maggio — Midtown · Central Park · Edge ★",
+  budget:[["Subway (3 corse)","~$8.70"],["Shake Shack (pranzo)","~$15"],["230 Fifth (cocktail)","~$18"],["Roosevelt Island Tramway","$2.90"],["Levain Bakery","~$7"],["Taxi rientro dall'Edge","~$8"]],
+  total:"~$58",
+  steps:[
+    {n:1,name:"Shopping Midtown — TJ Maxx / Marshalls / Burlington",time:"10:30",cost:"ingresso gratuito",opt:false,pre:false,
+     lat:40.744,lng:-73.994,
+     maps:"https://maps.google.com/?q=620+6th+Avenue+New+York",
+     desc:"620 6th Avenue — stesso edificio: TJ Maxx (piano superiore), Marshalls (piano interrato), Burlington (entrata separata).",
+     notes:[{t:"tip",txt:"Calcolate 2–2.5 ore. Portate una borsa extra vuota."}],
+     links:[]},
+    {n:2,name:"Grand Central Terminal",time:"13:00",cost:"gratuito",opt:false,pre:false,
+     lat:40.753,lng:-73.977,
+     maps:"https://maps.google.com/?q=Grand+Central+Terminal+New+York",
+     desc:"Soffitto celeste con costellazioni dorate. Whispering Gallery: sussurate in un angolo — chi è nell'angolo opposto vi sente. 30–40 minuti.",
+     notes:[{t:"tip",txt:"Entrate dall'ingresso su Vanderbilt Ave lato sud."}],
+     links:[{t:"Sito",u:"https://www.grandcentralterminal.com",s:""}]},
+    {n:3,name:"Shake Shack Madison Square Park — Pranzo",time:"14:00",cost:"~$15/pers.",opt:false,pre:false,
+     lat:40.741,lng:-73.988,
+     maps:"https://maps.google.com/?q=Shake+Shack+Madison+Square+Park+New+York",
+     desc:"Madison Ave & 23rd St — il PRIMO Shake Shack della storia (2004). Burger + fries + shake. Mangiate seduti nel parco.",
+     notes:[
+       {t:"subway",txt:"N/R da 42nd St a 23rd St, 3 min ($2.90)."},
+       {t:"tip",txt:"Nessuna prenotazione. Seduti sui panchetti del parco — è parte dell'esperienza."}
+     ],
+     links:[{t:"Sito",u:"https://www.shakeshack.com",s:""}]},
+    {n:4,name:"230 Fifth Rooftop — Aperitivo",time:"15:30",cost:"~$15–20 cocktail",opt:false,pre:false,
+     lat:40.744,lng:-73.988,
+     maps:"https://maps.google.com/?q=230+Fifth+Rooftop+Bar+New+York",
+     desc:"1150 Broadway — 5 min a piedi da Madison Square Park. Terrazza con l'Empire State Building davanti. Dalle 14:00.",
+     notes:[{t:"tip",txt:"Di pomeriggio rilassato e senza fila. Dress code casual ok."}],
+     links:[{t:"Sito",u:"https://230-fifth.com",s:""}]},
+    {n:5,name:"Roosevelt Island Tramway",time:"17:15",cost:"$2.90",opt:false,pre:false,
+     lat:40.758,lng:-73.954,
+     maps:"https://maps.google.com/?q=Roosevelt+Island+Tramway+New+York",
+     desc:"254 E 60th St. Funivia sopra l'East River: 3 minuti di volo. MetroCard ($2.90). Andata e ritorno.",
+     notes:[
+       {t:"subway",txt:"N/R/W da 23rd St a 59th St, 10 min + 8 min a piedi verso est."},
+       {t:"tip",txt:"Lato sinistro della cabina per la vista migliore su Manhattan."}
+     ],
+     links:[]},
+    {n:6,name:"Central Park — Statua di Alice in Wonderland",time:"18:15",cost:"gratuito",opt:false,pre:false,
+     lat:40.776,lng:-73.970,
+     maps:"https://maps.google.com/?q=Alice+in+Wonderland+Statue+Central+Park+New+York",
+     desc:"Entrate dal lato est (5th Ave e 72nd St). Al Conservatory Water: la statua di Alice (E 74th St) — potete salirci sopra!",
+     notes:[{t:"tip",txt:"Perfetto geograficamente — venite da est dopo la Tramway."}],
+     links:[]},
+    {n:7,name:"Levain Bakery",time:"19:00",cost:"~$5–8",opt:false,pre:false,
+     lat:40.780,lng:-73.981,
+     maps:"https://maps.google.com/?q=Levain+Bakery+167+W+74th+St+New+York",
+     desc:"167 W 74th St, Upper West Side. Cookie giganti, caldi, gommosi. Chiedete di scaldarli.",
+     notes:[{t:"tip",txt:"Rientro hotel: B/C da 72nd St a 42nd St, 10 min ($2.90)."}],
+     links:[{t:"Sito",u:"https://www.levainbakery.com",s:""}]},
+    {n:8,name:"Riposino + Cena leggera pre-Edge",time:"20:00–22:15",cost:"—",opt:false,pre:false,
+     lat:40.759,lng:-73.985,
+     maps:"https://maps.google.com/?q=Riu+Plaza+Times+Square+305+W+46th+St+New+York",
+     desc:"Doccia, cena leggera (delivery o qualcosa vicino all'hotel). L'Edge è alle 23:00.",
+     notes:[{t:"warn",txt:"Evitate cibo pesante prima della terrazza di notte in quota."}],
+     links:[]},
+    {n:9,name:"EDGE Hudson Yards — DJ Night ★ PRENOTATO",time:"22:30",cost:"PRENOTATO",opt:false,pre:true,
+     lat:40.754,lng:-74.002,
+     maps:"https://maps.google.com/?q=Edge+NYC+30+Hudson+Yards",
+     desc:"30 Hudson Yards. Terrazza triangolare a sbalzo: Manhattan illuminata a 360°, Hudson River, New Jersey sullo sfondo.",
+     notes:[
+       {t:"warn",txt:"Arrivate 30 min prima (ore 22:30). Biglietti già prenotati."},
+       {t:"subway",txt:"Subway 7 da Times Square a 34th St-Hudson Yards, 5 min + 5 min a piedi."},
+       {t:"tip",txt:"Portate un layer — in quota di notte fa più fresco. Rientro taxi/Uber ~$15."}
+     ],
+     links:[{t:"Sito EDGE",u:"https://edgenyc.com",s:""}]},
+    {n:10,name:"Times Square a mezzanotte",time:"~01:00",cost:"gratuito",opt:false,pre:false,
+     lat:40.758,lng:-73.986,
+     maps:"https://maps.google.com/?q=Times+Square+New+York",
+     desc:"Taxi/Uber vi lascia a Times Square — finale a piedi (3 min). Alle 00:00 i maxischermi cambiano simultaneamente.",
+     notes:[{t:"tip",txt:"Venerdì notte: ancora gente ma non il caos del sabato."}],
+     links:[]},
+  ]
+},
+{
+  label:"Sab 9", color:"#2E7D52", title:"Sabato 9 Maggio — Central Park · Summit ★",
+  budget:[["Bici Central Park (1 ora)","~$20"],["Hot Dog King Dan Rossi","~$6"],["Subway (2 corse)","~$5.80"],["Lost in Paradise (cocktail)","~$18"],["Skirt Steak (cena)","~$48"]],
+  total:"~$98",
+  steps:[
+    {n:1,name:"Central Park in bici — 1 ora precisa",time:"11:30",cost:"~$20/ora",opt:false,pre:false,
+     lat:40.765,lng:-73.975,
+     maps:"https://maps.google.com/?q=Central+Park+Bike+Rental+59th+Street+New+York",
+     desc:"Noleggio SW (59th St). PERCORSO: Entrata SW → Sheep Meadow → Cherry Hill → Bow Bridge → Belvedere Castle → uscita W 72nd St.",
+     notes:[
+       {t:"tip",txt:"Belvedere Castle: castello gotico, secondo punto più alto del parco. Vista su Great Lawn e skyline Midtown. Gratuito 10:00–17:00."},
+       {t:"tip",txt:"Ciliegi Kwanzan: possono resistere fino a inizio maggio — dita incrociate!"},
+       {t:"tip",txt:"Riconsegnate le bici all'uscita W 72nd St, poi 10 min a piedi verso il Met."}
+     ],
+     links:[]},
+    {n:2,name:"Bow Bridge",time:"11:50",cost:"gratuito",opt:false,pre:false,
+     lat:40.776,lng:-73.974,
+     maps:"https://maps.google.com/?q=Bow+Bridge+Central+Park+New+York",
+     desc:"La più fotografata di Central Park. Ponte in ghisa su uno specchio d'acqua.",
+     notes:[],links:[]},
+    {n:3,name:"Belvedere Castle",time:"12:05",cost:"gratuito",opt:false,pre:false,
+     lat:40.779,lng:-73.969,
+     maps:"https://maps.google.com/?q=Belvedere+Castle+Central+Park+New+York",
+     desc:"Castello gotico, secondo punto più alto del parco. Vista su Great Lawn, Turtle Pond e skyline Midtown.",
+     notes:[{t:"tip",txt:"Salite al terrazzo per la vista migliore. Aperto 10:00–17:00."}],
+     links:[]},
+    {n:4,name:"Hot Dog King Dan Rossi — davanti al Met",time:"13:15",cost:"~$5–8",opt:false,pre:false,
+     lat:40.779,lng:-73.963,
+     maps:"https://maps.google.com/?q=Metropolitan+Museum+of+Art+1000+5th+Ave+New+York",
+     desc:"Dan Rossi — veterano del Vietnam, Hot Dog King di NY dal 2007. Davanti al Met, 5th Ave e 82nd St.",
+     notes:[
+       {t:"tip",txt:"Hot dog + mustard + cipolle arrostite. Una leggenda di New York."},
+       {t:"warn",txt:"Sabato aperto 11:00–19:00. Chiuso il mercoledì."}
+     ],
+     links:[]},
+    {n:5,name:"Lost in Paradise Rooftop — Queens",time:"15:00",cost:"~$15–20 cocktail",opt:false,pre:false,
+     lat:40.748,lng:-73.944,
+     maps:"https://maps.google.com/?q=Lost+in+Paradise+Rooftop+Long+Island+City+Queens",
+     desc:"11-01 43rd Ave, Long Island City, Queens. Terrazza rooftop con vista spettacolare su Manhattan. Atmosfera latina.",
+     notes:[
+       {t:"subway",txt:"Subway 7 da Times Square a Queensboro Plaza, 10 min + 5 min a piedi ($2.90)."},
+       {t:"tip",txt:"Luce dorata su Manhattan nel pomeriggio — la vista migliore. Rientrate entro le 18:15."}
+     ],
+     links:[]},
+    {n:6,name:"Rientro hotel — Cambio d'abito",time:"18:15",cost:"—",opt:false,pre:false,
+     lat:40.759,lng:-73.985,
+     maps:"https://maps.google.com/?q=Riu+Plaza+Times+Square+305+W+46th+St+New+York",
+     desc:"Cambiatevi per il Summit. Arrivate al Summit alle 19:15.",
+     notes:[{t:"subway",txt:"Subway 7 da Queensboro Plaza a Times Square, 10 min ($2.90)."}],
+     links:[]},
+    {n:7,name:"SUMMIT One Vanderbilt ★ PRENOTATO",time:"19:30",cost:"PRENOTATO",opt:false,pre:true,
+     lat:40.753,lng:-73.978,
+     maps:"https://maps.google.com/?q=Summit+One+Vanderbilt+45+E+42nd+St+New+York",
+     desc:"45 E 42nd St. 12 minuti a piedi dall'hotel verso est. 427 metri sopra Grand Central. Stanze specchiate, cabine di vetro. Tramonto maggio (~20:00).",
+     notes:[
+       {t:"warn",txt:"Arrivate 15 min prima. Biglietti già prenotati. Niente borse grandi."},
+       {t:"tip",txt:"Posizionatevi presto nelle sale specchiate — la luce del tramonto è il momento clou."}
+     ],
+     links:[{t:"Sito Summit",u:"https://www.summitov.com",s:""}]},
+    {n:8,name:"Skirt Steak — Cena",time:"22:00",cost:"~$45–50/pers.",opt:false,pre:false,
+     lat:40.749,lng:-73.994,
+     maps:"https://maps.google.com/?q=Skirt+Steak+835+6th+Ave+New+York",
+     desc:"835 6th Ave. 10 min a piedi dal Summit. Una sola tagliata, patate fritte infinite. Sabato aperto fino alle 22:00.",
+     notes:[{t:"tip",txt:"Arrivate dopo le 21:30 per la fila più corta."}],
+     links:[]},
+    {n:9,name:"Sugarfish — Alternativa cena",time:"22:00",cost:"~$50/pers.",opt:true,pre:false,
+     lat:40.739,lng:-73.989,
+     maps:"https://maps.google.com/?q=Sugarfish+33+E+20th+St+New+York",
+     desc:"33 E 20th St. Menu 'Trust Me', omakase semplificato. Pesce freschissimo. No prenotazione, fila max 30 min.",
+     notes:[],
+     links:[{t:"Sito",u:"https://www.sugarfishsushi.com",s:""}]},
+  ]
+},
+{
+  label:"Dom 10", color:"#666", title:"Domenica 10 Maggio — Partenza · Volo 17:15",
+  budget:[["High Line + passeggiate","gratuito"],["Ultimo pasto","~$8"],["Bus Hotel → EWR","$26"]],
+  total:"~$34",
+  steps:[
+    {n:1,name:"Ultima colazione in hotel",time:"09:00",cost:"inclusa",opt:false,pre:false,
+     lat:40.759,lng:-73.985,
+     maps:"https://maps.google.com/?q=Riu+Plaza+Times+Square+305+W+46th+St+New+York",
+     desc:"Con calma. Chiedete il late checkout alle 12:00 alla reception LA SERA PRIMA.",
+     notes:[{t:"warn",txt:"Richiedete il late checkout la sera prima alla reception!"}],
+     links:[]},
+    {n:2,name:"High Line — Ultima passeggiata",time:"10:00",cost:"gratuito",opt:false,pre:false,
+     lat:40.748,lng:-74.005,
+     maps:"https://maps.google.com/?q=High+Line+Park+34th+St+New+York",
+     desc:"Parco sopraelevato su binari dismessi. Entrate dalla fine nord a 34th St verso sud fino al Meatpacking District.",
+     notes:[{t:"tip",txt:"Domenica mattina tranquilla e bellissima. Finite vicino allo shopping."}],
+     links:[{t:"Sito",u:"https://www.thehighline.org",s:""}]},
+    {n:3,name:"Acquisti last-minute — TJ Maxx",time:"11:00",cost:"ingresso gratuito",opt:false,pre:false,
+     lat:40.744,lng:-73.994,
+     maps:"https://maps.google.com/?q=TJ+Maxx+620+6th+Ave+New+York",
+     desc:"620 6th Ave. TJ Maxx apre alle 9:30 domenica. Ultima occasione acquisti.",
+     notes:[],links:[]},
+    {n:4,name:"Governors Island",time:"10:00",cost:"$5 A/R",opt:true,pre:false,
+     lat:40.690,lng:-74.017,
+     maps:"https://maps.google.com/?q=Governors+Island+Ferry+New+York",
+     desc:"Ferry da Battery Maritime Building, 10 South St. Solo se rientrate entro le 12:00.",
+     notes:[{t:"warn",txt:"Compatibile solo rinunciando ad High Line e shopping."}],
+     links:[{t:"Prenota",u:"https://www.govisland.com",s:"book"}]},
+    {n:5,name:"Check-out + Deposito bagagli",time:"12:00",cost:"gratuito",opt:false,pre:false,
+     lat:40.759,lng:-73.985,
+     maps:"https://maps.google.com/?q=Riu+Plaza+Times+Square+305+W+46th+St+New+York",
+     desc:"Lasciate le valigie in reception — gratuito. Ultima ora libera senza pesi.",
+     notes:[],links:[]},
+    {n:6,name:"Ultimo pasto: Joe's Pizza o Apollo Bagel",time:"13:00",cost:"~$5–10",opt:false,pre:false,
+     lat:40.731,lng:-74.002,
+     maps:"https://maps.google.com/?q=Joe's+Pizza+7+Carmine+St+New+York",
+     desc:"Joe's Pizza: 7 Carmine St, ~$5 a slice. Apollo Bagels domenica apre alle 7:00.",
+     notes:[{t:"warn",txt:"Joe's Pizza: SOLO CONTANTI. ~$5 a slice."}],
+     links:[]},
+    {n:7,name:"Newark Airport Express → EWR ★ TASSATIVO",time:"13:30 TASSATIVO",cost:"$26/pers.",opt:false,pre:false,
+     lat:40.757,lng:-73.990,
+     maps:"https://maps.google.com/?q=Port+Authority+Bus+Terminal+145+W+44th+St+New+York",
+     desc:"VOLO 17:15 → IN AEROPORTO ENTRO LE 15:00 → PARTITE ALLE 13:30 TASSATIVI. Da 145 W 44th St (Port Authority). Durata 50–65 min.",
+     notes:[
+       {t:"warn",txt:"NON scendete alle fermate Manhattan! Scendete al VOSTRO terminal — controllate il biglietto aereo la sera prima."},
+       {t:"warn",txt:"Domenica pomeriggio traffico verso il tunnel imprevedibile. 13:30 è il limite assoluto."},
+       {t:"tip",txt:"3 min a piedi dall'hotel fino a 145 W 44th St (tra 6th e 7th Ave, lato nord)."}
+     ],
+     links:[{t:"Biglietti",u:"https://www.newarkairportexpress.com",s:"book"}]},
+  ]
+}
+];
+
+let currentDay = 0;
+
+function svgCoord(lat, lng) {
+  const x = 102 + (lng - (-74.02)) / ((-73.93) - (-74.02)) * 93;
+  const y = 360 - (lat - 40.70) / (40.80 - 40.70) * 230;
+  return [x, y];
+}
+
+function renderMap(dayIdx) {
+  const day = DAYS[dayIdx];
+  const color = day.color;
+  const pinsLayer = document.getElementById('pins-layer');
+  const pathLayer = document.getElementById('path-layer');
+  pinsLayer.innerHTML = '';
+  pathLayer.innerHTML = '';
+
+  // Draw path
+  const mainSteps = day.steps.filter(s => !s.opt);
+  if (mainSteps.length > 1) {
+    let d = '';
+    mainSteps.forEach((s, i) => {
+      const [x, y] = svgCoord(s.lat, s.lng);
+      d += (i === 0 ? 'M' : 'L') + x + ',' + y + ' ';
+    });
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', color);
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute('stroke-dasharray', '5,4');
+    path.setAttribute('opacity', '0.5');
+    pathLayer.appendChild(path);
+  }
+
+  // Draw pins
+  day.steps.forEach(step => {
+    const [x, y] = svgCoord(step.lat, step.lng);
+    const bg = step.opt ? '#4a9a4a' : color;
+
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'map-pin');
+    g.setAttribute('transform', `translate(${x},${y})`);
+    g.setAttribute('data-n', step.n);
+    g.style.cursor = 'pointer';
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('r', '13');
+    circle.setAttribute('fill', bg);
+    circle.setAttribute('stroke', 'white');
+    circle.setAttribute('stroke-width', '2');
+    circle.setAttribute('filter', 'drop-shadow(0 1px 3px rgba(0,0,0,0.3))');
+
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('dy', '4');
+    text.setAttribute('fill', 'white');
+    text.setAttribute('font-size', '11');
+    text.setAttribute('font-weight', 'bold');
+    text.setAttribute('font-family', 'sans-serif');
+    text.setAttribute('pointer-events', 'none');
+    text.textContent = step.n;
+
+    g.appendChild(circle);
+    g.appendChild(text);
+    g.addEventListener('click', function() { openDetail(step, color); });
+    pinsLayer.appendChild(g);
+  });
+}
+
+function renderSteps(dayIdx) {
+  const day = DAYS[dayIdx];
+  const color = day.color;
+  let html = `<div class="day-title">${day.title}</div>`;
+  day.steps.forEach(step => {
+    const bg = step.opt ? '#4a9a4a' : color;
+    html += `<div class="step${step.opt?' opt-step':''}" onclick="openDetail(DAYS[${dayIdx}].steps[${step.n-1}],'${color}')">
+      <div class="step-num" style="background:${bg}">${step.n}</div>
+      <div class="step-body">
+        <div class="step-name">${step.name}${step.opt?'<span class="opt-tag">opzionale</span>':''}${step.pre?'<span class="pre-tag">★ prenotato</span>':''}</div>
+        <div class="step-sub">${step.time}</div>
+      </div>
+      <div class="step-cost">${step.cost}</div>
+    </div>`;
+  });
+  // Budget
+  html += `<div style="margin:14px 0 6px;padding:12px;background:#fff;border-radius:12px;border:1px solid var(--border);">
+    <div style="font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Budget giornata / persona</div>`;
+  day.budget.forEach(([l,c]) => {
+    html += `<div class="b-row"><span>${l}</span><span style="font-weight:500">${c}</span></div>`;
+  });
+  html += `<div class="b-row tot"><span>Totale stimato</span><span>${day.total}</span></div></div>`;
+  document.getElementById('steps').innerHTML = html;
+}
+
+function renderTabs(dayIdx) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    const active = i === dayIdx;
+    t.classList.toggle('active', active);
+    t.style.background = active ? DAYS[i].color : 'transparent';
+    t.style.borderColor = active ? DAYS[i].color : '#444';
+    t.style.color = active ? 'white' : '#aaa';
+  });
+}
+
+function renderLegend(dayIdx) {
+  const day = DAYS[dayIdx];
+  document.getElementById('legend').innerHTML =
+    `<div class="leg"><span class="leg-dot" style="background:${day.color}"></span><span style="font-weight:500">${day.title}</span></div>` +
+    `<div class="leg"><span class="leg-dot" style="background:#4a9a4a"></span><span>Opzionale</span></div>`;
+}
+
+function switchDay(i) {
+  currentDay = i;
+  renderTabs(i);
+  renderLegend(i);
+  renderMap(i);
+  renderSteps(i);
+  closeDetail();
+}
+
+function noteIcon(t) {
+  if(t==='warn') return '⚠️ ';
+  if(t==='subway') return '🚇 ';
+  return '💡 ';
+}
+
+function openDetail(step, color) {
+  if (!step) return;
+  const c = step.opt ? '#4a9a4a' : color;
+  let badges = `<span class="badge b-time">${step.time}</span>`;
+  if (step.cost !== '—') badges += `<span class="badge b-cost">${step.cost}</span>`;
+  if (step.opt) badges += `<span class="badge b-opt">Opzionale</span>`;
+  if (step.pre) badges += `<span class="badge b-pre">★ Prenotato</span>`;
+  if (step.cost === 'gratuito') badges += `<span class="badge b-free">Gratuito</span>`;
+
+  const notesHtml = step.notes.map(n =>
+    `<div class="d-note ${n.t}">${noteIcon(n.t)}${n.txt}</div>`
+  ).join('');
+
+  const linksHtml = step.links.map(l =>
+    `<a class="lbtn ${l.s}" href="${l.u}" target="_blank">${l.t} ↗</a>`
+  ).join('');
+
+  document.getElementById('detail-inner').innerHTML = `
+    <div class="d-header">
+      <div class="d-top">
+        <div class="d-num" style="background:${c}">${step.n}</div>
+        <div class="d-name">${step.name}</div>
+      </div>
+      <div class="d-badges">${badges}</div>
+    </div>
+    <div class="d-section">
+      <div class="s-label">Descrizione</div>
+      <div class="d-desc">${step.desc}</div>
+      ${notesHtml}
+    </div>
+    <div class="link-row">
+      <a class="lbtn maps" href="${step.maps}" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        Apri in Google Maps
+      </a>
+      ${linksHtml}
+    </div>
+  `;
+
+  document.getElementById('detail').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detail').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+// Init tabs
+const tabsEl = document.getElementById('tabs');
+DAYS.forEach((d, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'tab';
+  btn.textContent = d.label;
+  btn.onclick = () => switchDay(i);
+  tabsEl.appendChild(btn);
+});
+
+switchDay(0);
+</script>
+
+
+</body></html>
